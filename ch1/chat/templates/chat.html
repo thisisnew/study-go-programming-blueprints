@@ -47,7 +47,9 @@
             }
 
             socket.onmessage = function (e) {
-                messages.append("<li>" + e.data + "</li>");
+                let element = document.createElement("li");
+                element.appendChild(e.data);
+                messages.appendChild(element);
             }
         }
 
