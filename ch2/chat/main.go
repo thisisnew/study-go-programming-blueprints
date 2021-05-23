@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"github.com/BurntSushi/toml"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/facebook"
 	"github.com/stretchr/gomniauth/providers/github"
@@ -12,6 +14,11 @@ import (
 	"sync"
 	"text/template"
 )
+
+type oAuthInfo struct {
+	googleClientId     string `toml:"google_client_id"`
+	googleClientSecret string `toml:"google_client_secret"`
+}
 
 type templateHandler struct {
 	once     sync.Once
@@ -32,10 +39,20 @@ func main() {
 	flag.Parse()
 
 	gomniauth.SetSecurityKey("PUT YOUR AUTH KEY HERE")
+
+	var oAuthInfo oAuthInfo
+	_, err := toml.DecodeFile("./env.toml", &oAuthInfo)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(oAuthInfo.googleClientId)
+	fmt.Println(oAuthInfo.googleClientSecret)
+
 	gomniauth.WithProviders(
 		facebook.New("key", "secret", "http://localhost:8080/auth/callback/facebook"),
 		github.New("key", "secret", "http://localhost:8080/auth/callback/github"),
-		google.New("key", "secret", "http://localhost:8080/auth/callback/google"),
+		google.New(oAuthInfo.googleClientId, oAuthInfo.googleClientSecret, "http://localhost:8080/auth/callback/google"),
 	)
 
 	r := newRoom()
