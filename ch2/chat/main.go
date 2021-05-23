@@ -28,7 +28,9 @@ func main() {
 	flag.Parse()
 	r := newRoom()
 	http.Handle("/", MustAuth(&templateHandler{filename: "chat.html"}))
+	http.Handle("/login", &templateHandler{filename: "login.html"})
 	http.Handle("/room", r)
+	http.Handle("/assets/", http.StripPrefix("/assets", http.FileServer(http.Dir("/path/to/assets/"))))
 	go r.run()
 
 	log.Println("Starting web server on", *addr)
