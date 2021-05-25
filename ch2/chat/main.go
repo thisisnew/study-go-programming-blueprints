@@ -2,23 +2,18 @@ package main
 
 import (
 	"flag"
-	"fmt"
-	"github.com/BurntSushi/toml"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/facebook"
 	"github.com/stretchr/gomniauth/providers/github"
 	"github.com/stretchr/gomniauth/providers/google"
+	"github.com/stretchr/objx"
 	"log"
 	"net/http"
 	"path/filepath"
+	"study-go-programming-blueprints/ch2/chat/util"
 	"sync"
 	"text/template"
 )
-
-type oAuthInfo struct {
-	googleClientId     string `toml:"google_client_id"`
-	googleClientSecret string `toml:"google_client_secret"`
-}
 
 type templateHandler struct {
 	once     sync.Once
@@ -31,6 +26,13 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		t.templ = template.Must(template.ParseFiles(filepath.Join("templates", t.filename)))
 	})
 
+	data := map[string]interface{}{
+		"Host": r.Host,
+	}
+
+	if authCookie, err := r.Cookie("auth"); err == nil {
+		data["UserData"] = objx.MustFromBase64(authCookie.Value)
+	}
 	t.templ.Execute(w, nil)
 }
 
@@ -40,19 +42,15 @@ func main() {
 
 	gomniauth.SetSecurityKey("PUT YOUR AUTH KEY HERE")
 
-	var oAuthInfo oAuthInfo
-	_, err := toml.DecodeFile("./env.toml", &oAuthInfo)
+	config, err := util.LoadConfig(".")
 	if err != nil {
-		panic(err)
+		log.Fatal("cannot load config:", err)
 	}
-
-	fmt.Println(oAuthInfo.googleClientId)
-	fmt.Println(oAuthInfo.googleClientSecret)
 
 	gomniauth.WithProviders(
 		facebook.New("key", "secret", "http://localhost:8080/auth/callback/facebook"),
 		github.New("key", "secret", "http://localhost:8080/auth/callback/github"),
-		google.New(oAuthInfo.googleClientId, oAuthInfo.googleClientSecret, "http://localhost:8080/auth/callback/google"),
+		google.New(config.GoogleClientId, config.GoogleClientSecret, "http://localhost:8080/auth/callback/google"),
 	)
 
 	r := newRoom()
