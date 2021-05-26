@@ -29,15 +29,16 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	data := map[string]interface{}{
 		"Host": r.Host,
 	}
-
 	if authCookie, err := r.Cookie("auth"); err == nil {
 		data["UserData"] = objx.MustFromBase64(authCookie.Value)
 	}
-	t.templ.Execute(w, nil)
+
+	t.templ.Execute(w, data)
 }
 
+var host = flag.String("host", ":8080", "The host of the application.")
+
 func main() {
-	var addr = flag.String("addr", ":8080", "The addr of the application")
 	flag.Parse()
 
 	gomniauth.SetSecurityKey("PUT YOUR AUTH KEY HERE")
@@ -61,9 +62,8 @@ func main() {
 	http.Handle("/assets/", http.StripPrefix("/assets", http.FileServer(http.Dir("/path/to/assets/"))))
 	go r.run()
 
-	log.Println("Starting web server on", *addr)
-
-	if err := http.ListenAndServe(*addr, nil); err != nil {
+	log.Println("Starting web server on", *host)
+	if err := http.ListenAndServe(*host, nil); err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
 }

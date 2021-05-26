@@ -3,10 +3,10 @@ module study-go-programming-blueprints
 go 1.16
 
 require (
-	github.com/BurntSushi/toml v0.3.1
 	github.com/clbanning/x2j v0.0.0-20191024224557-825249438eec // indirect
 	github.com/gorilla/websocket v1.4.2
-	github.com/spf13/viper v1.7.1 // indirect
+	github.com/matryer/goblueprints v2.0.0+incompatible
+	github.com/spf13/viper v1.7.1
 	github.com/stretchr/codecs v0.0.0-20170403063245-04a5b1e1910d // indirect
 	github.com/stretchr/gomniauth v0.0.0-20170717123514-4b6c822be2eb
 	github.com/stretchr/objx v0.3.0
