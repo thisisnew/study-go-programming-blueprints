@@ -15,6 +15,11 @@ import (
 	"text/template"
 )
 
+var avatars Avatar = TryAvatars{
+	UseFileSystemAvatar,
+	UseAuthAvatar,
+	UseGravatar}
+
 type templateHandler struct {
 	once     sync.Once
 	filename string
@@ -22,9 +27,9 @@ type templateHandler struct {
 }
 
 func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	t.once.Do(func() {
+	if t.templ == nil {
 		t.templ = template.Must(template.ParseFiles(filepath.Join("templates", t.filename)))
-	})
+	}
 
 	data := map[string]interface{}{
 		"Host": r.Host,
@@ -41,25 +46,23 @@ var host = flag.String("host", ":8080", "The host of the application.")
 func main() {
 	flag.Parse()
 
-	gomniauth.SetSecurityKey("PUT YOUR AUTH KEY HERE")
-
 	config, err := util.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
 
+	gomniauth.SetSecurityKey("PUT YOUR AUTH KEY HERE")
 	gomniauth.WithProviders(
 		facebook.New("key", "secret", "http://localhost:8080/auth/callback/facebook"),
 		github.New("key", "secret", "http://localhost:8080/auth/callback/github"),
 		google.New(config.GoogleClientId, config.GoogleClientSecret, "http://localhost:8080/auth/callback/google"),
 	)
 
-	r := newRoom(UseFileSystemAvatar)
-	http.Handle("/", MustAuth(&templateHandler{filename: "chat.html"}))
+	r := newRoom()
+	http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}))
 	http.Handle("/login", &templateHandler{filename: "login.html"})
 	http.HandleFunc("/auth/", loginHandler)
 	http.Handle("/room", r)
-	http.Handle("/assets/", http.StripPrefix("/assets", http.FileServer(http.Dir("/path/to/assets/"))))
 	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
 			Name:   "auth",
@@ -71,9 +74,9 @@ func main() {
 		w.WriteHeader(http.StatusTemporaryRedirect)
 	})
 	http.Handle("/upload", &templateHandler{filename: "upload.html"})
-	http.HandleFunc("/uploader", uploadHandler)
-	http.Handle("/avatars/", http.StripPrefix("/avatars/", http.FileServer(http.Dir("./avatars"))))
+	http.HandleFunc("/uploader", uploaderHandler)
 
+	http.Handle("/avatars/", http.StripPrefix("/avatars/", http.FileServer(http.Dir("./avatars"))))
 	go r.run()
 
 	log.Println("Starting web server on", *host)
