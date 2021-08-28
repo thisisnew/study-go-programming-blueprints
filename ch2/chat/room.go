@@ -1,31 +1,18 @@
 package main
 
 import (
+	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
-
-	"github.com/stretchr/objx"
-
-	"github.com/gorilla/websocket"
-	"github.com/matryer/goblueprints/chapter1/trace"
+	"study-go-programming-blueprints/ch1/trace"
 )
 
 type room struct {
-	forward chan *message
+	forward chan []byte
 	join    chan *client
 	leave   chan *client
 	clients map[*client]bool
 	tracer  trace.Tracer
-}
-
-func newRoom() *room {
-	return &room{
-		forward: make(chan *message),
-		join:    make(chan *client),
-		leave:   make(chan *client),
-		clients: make(map[*client]bool),
-		tracer:  trace.Off(),
-	}
 }
 
 func (r *room) run() {
@@ -39,21 +26,35 @@ func (r *room) run() {
 			close(client.send)
 			r.tracer.Trace("Client left")
 		case msg := <-r.forward:
-			r.tracer.Trace("Message received: ", string(msg.Message))
+			r.tracer.Trace("Message received: ", string(msg))
+
 			for client := range r.clients {
 				client.send <- msg
-				r.tracer.Trace(" -- sent to client")
+				r.tracer.Trace("-- sent to client")
 			}
 		}
 	}
 }
 
+func newRoom() *room {
+	return &room{
+		forward: make(chan []byte),
+		join:    make(chan *client),
+		leave:   make(chan *client),
+		clients: make(map[*client]bool),
+		tracer:  trace.Off(),
+	}
+}
+
 const (
 	socketBufferSize  = 1024
-	messageBufferSize = 256
+	messageBufferSize = 2048
 )
 
-var upgrader = &websocket.Upgrader{ReadBufferSize: socketBufferSize, WriteBufferSize: socketBufferSize}
+var upgrader = &websocket.Upgrader{
+	ReadBufferSize:  socketBufferSize,
+	WriteBufferSize: messageBufferSize,
+}
 
 func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	socket, err := upgrader.Upgrade(w, req, nil)
@@ -62,17 +63,12 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	authCookie, err := req.Cookie("auth")
-	if err != nil {
-		log.Fatal("Failed to get auth cookie:", err)
-		return
-	}
 	client := &client{
-		socket:   socket,
-		send:     make(chan *message, messageBufferSize),
-		room:     r,
-		userData: objx.MustFromBase64(authCookie.Value),
+		socket: socket,
+		send:   make(chan []byte, messageBufferSize),
+		room:   r,
 	}
+
 	r.join <- client
 	defer func() { r.leave <- client }()
 	go client.write()
