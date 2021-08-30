@@ -17,8 +17,7 @@ type templateHandler struct {
 
 func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.once.Do(func() {
-		//t.templ = template.Must(template.ParseFiles(filepath.Join("C:/Users/dhkim/GolandProjects/study-go-programming-blueprints/ch1/chat/templates", t.filename)))
-		t.templ = template.Must(template.ParseFiles(filepath.Join("C:/Users/dhkim/go/src/study-go-programming-blueprints/ch1/chat/templates", t.filename)))
+		t.templ = template.Must(template.ParseFiles(filepath.Join("C:/Users/dhkim/GolandProjects/study-go-programming-blueprints/ch2/chat/templates", t.filename)))
 	})
 
 	t.templ.Execute(w, r)
@@ -30,6 +29,8 @@ func main() {
 
 	r := newRoom()
 	http.Handle("/", MustAuth(&templateHandler{filename: "chat.html"}))
+	http.Handle("/login", &templateHandler{filename: "login.html"})
+	http.HandleFunc("/auth/", loginHandler)
 	http.Handle("/room", r)
 
 	go r.run()
