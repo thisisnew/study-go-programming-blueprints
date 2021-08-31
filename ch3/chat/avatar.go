@@ -2,9 +2,11 @@ package main
 
 import (
 	"errors"
+	"io/ioutil"
+	"path"
 )
 
-var ErroNoAvatarURL = errors.New("chat : Unable to get an avatar URL.")
+var ErrNoAvatarURL = errors.New("chat : Unable to get an avatar URL.")
 
 type Avatar interface {
 	GetAvatarURL(c *client) (string, error)
@@ -46,7 +48,18 @@ var UserFileSystemAvatar FileSystemAvatar
 func (FileSystemAvatar) GetAvatarURL(c *client) (string, error) {
 	if userid, ok := c.userData["userid"]; ok {
 		if useridStr, ok := userid.(string); ok {
-			return "/avatars/" + useridStr + ".jpg", nil
+			files, err := ioutil.ReadDir("avatars")
+			if err != nil {
+				return "", ErroNoAvatarURL
+			}
+			for _, file := range files {
+				if file.IsDir() {
+					continue
+				}
+				if match, _ := path.Match(useridStr+"*", file.Name()); match {
+					return "/avatars/" + file.Name(), nil
+				}
+			}
 		}
 	}
 	return "", ErroNoAvatarURL
