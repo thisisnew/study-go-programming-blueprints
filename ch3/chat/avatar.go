@@ -37,3 +37,17 @@ func (GravatarAvatar) GetAvatarURL(c *client) (string, error) {
 	}
 	return "", ErroNoAvatarURL
 }
+
+type FileSystemAvatar struct {
+}
+
+var UserFileSystemAvatar FileSystemAvatar
+
+func (FileSystemAvatar) GetAvatarURL(c *client) (string, error) {
+	if userid, ok := c.userData["userid"]; ok {
+		if useridStr, ok := userid.(string); ok {
+			return "/avatars/" + useridStr + ".jpg", nil
+		}
+	}
+	return "", ErroNoAvatarURL
+}

@@ -49,10 +49,11 @@ func main() {
 	gomniauth.WithProviders(
 		facebook.New("key", "secret", "http://localhost:8080/auth/callback/facebook"),
 		github.New("key", "secret", "http://localhost:8080/auth/callback/github"),
-		google.New("key", "secret", "http://localhost:8080/auth/callback/google"),
+		/*google.New("key", "secret", "http://localhost:8080/auth/callback/google"),*/
+		google.New("499113554757-9mevutrp9htdoinok3n60sik5gnr46qd.apps.googleusercontent.com", "Nv0Csq-E2WSHvlP4wRi6mI-Y", "http://localhost:8080/auth/callback/google"),
 	)
 
-	r := newRoom(UseGravatar)
+	r := newRoom(UserFileSystemAvatar)
 	r.tracer = trace.New(os.Stdout)
 
 	http.Handle("/", MustAuth(&templateHandler{filename: "chat.html"}))
@@ -71,6 +72,7 @@ func main() {
 		writer.WriteHeader(http.StatusTemporaryRedirect)
 	})
 	http.HandleFunc("/uploader", uploaderHandler)
+	http.Handle("/avatars/", http.StripPrefix("/avatars/", http.FileServer(http.Dir("./avatars"))))
 
 	go r.run()
 
