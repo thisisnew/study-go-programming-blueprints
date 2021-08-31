@@ -2,12 +2,16 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"github.com/matryer/goblueprints/chapter1/trace"
 	"github.com/stretchr/gomniauth"
 	"github.com/stretchr/gomniauth/providers/facebook"
 	"github.com/stretchr/gomniauth/providers/github"
 	"github.com/stretchr/gomniauth/providers/google"
+	"github.com/stretchr/objx"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"sync"
 	"text/template"
@@ -24,6 +28,16 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		t.templ = template.Must(template.ParseFiles(filepath.Join("C:/Users/dhkim/GolandProjects/study-go-programming-blueprints/ch2/chat/templates", t.filename)))
 	})
 
+	data := map[string]interface{}{
+		"Host": r.Host,
+	}
+
+	if authCookie, err := r.Cookie("auth"); err == nil {
+		data["UserData"] = objx.MustFromBase64(authCookie.Value)
+	}
+
+	fmt.Println("data[\"UserData\"] :", data["UserData"])
+
 	t.templ.Execute(w, r)
 }
 
@@ -35,10 +49,13 @@ func main() {
 	gomniauth.WithProviders(
 		facebook.New("key", "secret", "http://localhost:8080/auth/callback/facebook"),
 		github.New("key", "secret", "http://localhost:8080/auth/callback/github"),
-		google.New("key", "secret", "http://localhost:8080/auth/callback/google"),
+		//google.New("key", "secret", "http://localhost:8080/auth/callback/google"),
+		google.New("499113554757-9mevutrp9htdoinok3n60sik5gnr46qd.apps.googleusercontent.com", "jKNsrk8gIPhV_wn-XRd3z78z", "http://localhost:8080/auth/callback/google"),
 	)
 
 	r := newRoom()
+	r.tracer = trace.New(os.Stdout)
+
 	http.Handle("/", MustAuth(&templateHandler{filename: "chat.html"}))
 	http.Handle("/login", &templateHandler{filename: "login.html"})
 	http.HandleFunc("/auth/", loginHandler)
