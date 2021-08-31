@@ -57,6 +57,7 @@ func main() {
 
 	http.Handle("/", MustAuth(&templateHandler{filename: "chat.html"}))
 	http.Handle("/login", &templateHandler{filename: "login.html"})
+	http.Handle("/upload", &templateHandler{filename: "upload.html"})
 	http.HandleFunc("/auth/", loginHandler)
 	http.Handle("/room", r)
 	http.HandleFunc("/logout", func(writer http.ResponseWriter, request *http.Request) {
@@ -69,6 +70,7 @@ func main() {
 		writer.Header().Set("Location", "/chat")
 		writer.WriteHeader(http.StatusTemporaryRedirect)
 	})
+	http.HandleFunc("/uploader", uploaderHandler)
 
 	go r.run()
 
