@@ -25,7 +25,7 @@ type templateHandler struct {
 
 func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	t.once.Do(func() {
-		t.templ = template.Must(template.ParseFiles(filepath.Join("C:/Users/dhkim/GolandProjects/study-go-programming-blueprints/ch2/chat/templates", t.filename)))
+		t.templ = template.Must(template.ParseFiles(filepath.Join("C:/Users/dhkim/GolandProjects/study-go-programming-blueprints/ch3/chat/templates", t.filename)))
 	})
 
 	data := map[string]interface{}{
@@ -38,7 +38,7 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("data[\"UserData\"] :", data["UserData"])
 
-	t.templ.Execute(w, r)
+	t.templ.Execute(w, data)
 }
 
 func main() {
