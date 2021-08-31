@@ -49,11 +49,10 @@ func main() {
 	gomniauth.WithProviders(
 		facebook.New("key", "secret", "http://localhost:8080/auth/callback/facebook"),
 		github.New("key", "secret", "http://localhost:8080/auth/callback/github"),
-		//google.New("key", "secret", "http://localhost:8080/auth/callback/google"),
-		google.New("499113554757-9mevutrp9htdoinok3n60sik5gnr46qd.apps.googleusercontent.com", "jKNsrk8gIPhV_wn-XRd3z78z", "http://localhost:8080/auth/callback/google"),
+		google.New("key", "secret", "http://localhost:8080/auth/callback/google"),
 	)
 
-	r := newRoom()
+	r := newRoom(UseAuthAvatar)
 	r.tracer = trace.New(os.Stdout)
 
 	http.Handle("/", MustAuth(&templateHandler{filename: "chat.html"}))
