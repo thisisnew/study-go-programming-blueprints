@@ -9,7 +9,6 @@
     </style>
 </head>
 <body>
-
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-body">
@@ -24,21 +23,17 @@
         <input type="submit" value="Send" class="btn btn-default" />
     </form>
 </div>
-
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script>
-
     $(function(){
-
         var socket = null;
         var msgBox = $("#chatbox textarea");
         var messages = $("#messages");
 
         $("#chatbox").submit(function(){
-
             if (!msgBox.val()) return false;
             if (!socket) {
-                alert("Error: 연결이 종료되었습니다.");
+                alert("Error: There is no socket connection.");
                 return false;
             }
 
@@ -49,7 +44,7 @@
         });
 
         if (!window["WebSocket"]) {
-            alert("Error: 해당 브라우저는 웹소켓을 지원하지 않습니다.")
+            alert("Error: Your browser does not support web sockets.")
         } else {
             socket = new WebSocket("ws://{{.Host}}/room");
             socket.onclose = function() {
@@ -68,8 +63,8 @@
                 );
             }
         }
-
     });
+
 </script>
 </body>
 </html>
