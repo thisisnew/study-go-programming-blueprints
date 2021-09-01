@@ -17,6 +17,8 @@ import (
 	"text/template"
 )
 
+var avatars Avatar = UserFileSystemAvatar
+
 type templateHandler struct {
 	once     sync.Once
 	filename string
@@ -49,11 +51,10 @@ func main() {
 	gomniauth.WithProviders(
 		facebook.New("key", "secret", "http://localhost:8080/auth/callback/facebook"),
 		github.New("key", "secret", "http://localhost:8080/auth/callback/github"),
-		/*google.New("key", "secret", "http://localhost:8080/auth/callback/google"),*/
-		google.New("499113554757-9mevutrp9htdoinok3n60sik5gnr46qd.apps.googleusercontent.com", "Nv0Csq-E2WSHvlP4wRi6mI-Y", "http://localhost:8080/auth/callback/google"),
+		google.New("key", "secret", "http://localhost:8080/auth/callback/google"),
 	)
 
-	r := newRoom(UserFileSystemAvatar)
+	r := newRoom()
 	r.tracer = trace.New(os.Stdout)
 
 	http.Handle("/", MustAuth(&templateHandler{filename: "chat.html"}))
