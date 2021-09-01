@@ -17,7 +17,11 @@ import (
 	"text/template"
 )
 
-var avatars Avatar = UserFileSystemAvatar
+var avatars Avatar = TryAvatars{
+	UserFileSystemAvatar,
+	UseAuthAvatar,
+	UseGravatar,
+}
 
 type templateHandler struct {
 	once     sync.Once
