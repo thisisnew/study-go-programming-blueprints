@@ -76,6 +76,7 @@ func main() {
 		writer.Header().Set("Location", "/chat")
 		writer.WriteHeader(http.StatusTemporaryRedirect)
 	})
+
 	http.HandleFunc("/uploader", uploaderHandler)
 	http.Handle("/avatars/", http.StripPrefix("/avatars/", http.FileServer(http.Dir("./avatars"))))
 
