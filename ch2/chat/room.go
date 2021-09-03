@@ -65,6 +65,7 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	authCookie, err := req.Cookie("auth")
+
 	if err != nil {
 		log.Fatal("Failed to get auth cookie:", err)
 		return
