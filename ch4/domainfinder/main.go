@@ -7,11 +7,11 @@ import (
 )
 
 var cmdChain = []*exec.Cmd{
-	exec.Command("lib/synonyms"),
-	exec.Command("lib/sprinkle"),
-	exec.Command("lib/coolify"),
-	exec.Command("lib/domainify"),
-	exec.Command("lib/available"),
+	exec.Command("C:/Users/dhkim/go/src/study-go-programming-blueprints/ch4/domainfinder/lib/synonyms"),
+	exec.Command("C:/Users/dhkim/go/src/study-go-programming-blueprints/ch4/domainfinder/lib/sprinkle"),
+	exec.Command("C:/Users/dhkim/go/src/study-go-programming-blueprints/ch4/domainfinder/lib/coolify"),
+	exec.Command("C:/Users/dhkim/go/src/study-go-programming-blueprints/ch4/domainfinder/lib/domainify"),
+	exec.Command("C:/Users/dhkim/go/src/study-go-programming-blueprints/ch4/domainfinder/lib/available"),
 }
 
 func main() {
