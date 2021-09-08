@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"gopkg.in/mgo.v2"
 	"net/http"
 )
 
@@ -30,6 +31,18 @@ func withAPIkey(fn http.HandlerFunc) http.HandlerFunc {
 		ctx := context.WithValue(request.Context(), contextKeyAPIKey, key)
 		fn(writer, request.WithContext(ctx))
 	}
+}
+
+func withCORS(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Expose-Headers", "Location")
+		fn(w, r)
+	}
+}
+
+type Server struct {
+	db *mgo.Session
 }
 
 func main() {

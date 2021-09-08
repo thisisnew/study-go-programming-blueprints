@@ -22,17 +22,13 @@ func respond(w http.ResponseWriter, r *http.Request,
 		encodeBody(w, r, data)
 	}
 }
-func respondErr(w http.ResponseWriter, r *http.Request,
-	status int, args ...interface{},
-) {
+func respondErr(w http.ResponseWriter, r *http.Request, status int, args ...interface{}) {
 	respond(w, r, status, map[string]interface{}{
 		"error": map[string]interface{}{
 			"message": fmt.Sprint(args...),
 		},
 	})
 }
-func respondHTTPErr(w http.ResponseWriter, r *http.Request,
-	status int,
-) {
+func respondHTTPErr(w http.ResponseWriter, r *http.Request, status int) {
 	respondErr(w, r, status, http.StatusText(status))
 }
