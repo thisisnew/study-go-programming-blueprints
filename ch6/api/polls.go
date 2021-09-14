@@ -67,7 +67,9 @@ func (s *Server) handlePollsPost(w http.ResponseWriter, r *http.Request) {
 	if ok {
 		p.APIKey = apikey
 	}
+
 	p.ID = bson.NewObjectId()
+
 	if err := c.Insert(p); err != nil {
 		respondErr(w, r, http.StatusInternalServerError, "failed to insert poll", err)
 		return
