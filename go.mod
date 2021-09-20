@@ -3,6 +3,7 @@ module study-go-programming-blueprints
 go 1.16
 
 require (
+	github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927
 	github.com/clbanning/x2j v0.0.0-20191024224557-825249438eec // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/matryer/goblueprints v2.0.0+incompatible
