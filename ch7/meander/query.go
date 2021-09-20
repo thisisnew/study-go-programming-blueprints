@@ -112,6 +112,7 @@ func (q *Query) Run() []interface{} {
 			l.Unlock()
 		}(r, i)
 	}
+
 	w.Wait()
 	return places
 }
