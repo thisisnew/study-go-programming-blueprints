@@ -1,5 +1,7 @@
 package meander
 
+var APIkey string
+
 type Place struct {
 	*googleGeometry `json:"geometry"`
 	Name            string         `json:"name"`
