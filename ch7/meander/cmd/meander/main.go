@@ -11,9 +11,9 @@ import (
 func main() {
 	meander.APIkey = ""
 
-	http.HandleFunc("/journeys", func(writer http.ResponseWriter, request *http.Request) {
-		respond(writer, request, meander.Journeys)
-	})
+	http.HandleFunc("/journeys", cors(func(w http.ResponseWriter, r *http.Request) {
+		respond(w, r, meander.Journeys)
+	}))
 	http.HandleFunc("/recommendations", cors(func(w http.ResponseWriter, r *http.Request) {
 		q := &meander.Query{
 			Journey: strings.Split(r.URL.Query().Get("journey"), "|"),
