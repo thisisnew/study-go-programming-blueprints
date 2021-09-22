@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var APIkey string
+var APIKey string
 
 type Place struct {
 	*googleGeometry `json:"geometry"`
@@ -19,21 +19,6 @@ type Place struct {
 	Icon            string         `json:"icon"`
 	Photos          []*googlePhoto `json:"photos"`
 	Vicinity        string         `json:"vicinity"`
-}
-
-type googleResponse struct {
-	Results []*Place `json:"results"`
-}
-type googleGeometry struct {
-	*googleLocation `json:"location"`
-}
-type googleLocation struct {
-	Lat float64 `json:"lat"`
-	Lng float64 `json:"lng"`
-}
-type googlePhoto struct {
-	PhotoRef string `json:"photo_reference"`
-	URL      string `json:"url"`
 }
 
 func (p *Place) Public() interface{} {
@@ -61,7 +46,7 @@ func (q *Query) find(types string) (*googleResponse, error) {
 	vals.Set("location", fmt.Sprintf("%g,%g", q.Lat, q.Lng))
 	vals.Set("radius", fmt.Sprintf("%d", q.Radius))
 	vals.Set("types", types)
-	vals.Set("key", APIkey)
+	vals.Set("key", APIKey)
 	if len(q.CostRangeStr) > 0 {
 		r, err := ParseCostRange(q.CostRangeStr)
 		if err != nil {
@@ -103,7 +88,7 @@ func (q *Query) Run() []interface{} {
 			for _, result := range response.Results {
 				for _, photo := range result.Photos {
 					photo.URL = "https://maps.googleapis.com/maps/api/place/photo?" +
-						"maxwidth=1000&photoreference=" + photo.PhotoRef + "&key=" + APIkey
+						"maxwidth=1000&photoreference=" + photo.PhotoRef + "&key=" + APIKey
 				}
 			}
 			randI := rand.Intn(len(response.Results))
@@ -112,7 +97,23 @@ func (q *Query) Run() []interface{} {
 			l.Unlock()
 		}(r, i)
 	}
-
 	w.Wait()
 	return places
+}
+
+type googleResponse struct {
+	Results []Place `json:"results"`
+}
+type googleGeometry struct {
+	googleLocation `json:"location"`
+}
+type googleLocation struct {
+	Lat float64 `json:"lat"`
+	Lng float64 `json:"lng"`
+}
+type googlePhoto struct {
+	Height   int    `json:"height"`
+	Width    int    `json:"width"`
+	PhotoRef string `json:"photo_reference"`
+	URL      string `json:"url"`
 }
