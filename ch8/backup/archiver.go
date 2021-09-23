@@ -8,10 +8,15 @@ import (
 )
 
 type Archiver interface {
+	DestFmt() string
 	Archiver(src, dest string) error
 }
 
 type zipper struct {
+}
+
+func (z *zipper) DestFmt() string {
+	return "%d.zip"
 }
 
 func (z *zipper) Archiver(src, dest string) error {
