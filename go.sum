@@ -12,6 +12,8 @@ github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfn
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0 h1:45sCR5RtlFHMR4UwH9sdQ5TC8v0qDQCHnXt+kaKSTVE=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
+github.com/matryer/filedb v0.0.0-20141103144311-3641db67a8c9 h1:O2sPfMaBlsDuNxX6Y9zZ6vSBxHEI/NEKMsNbATtS/Dc=
+github.com/matryer/filedb v0.0.0-20141103144311-3641db67a8c9/go.mod h1:KrO7nMbK2F+aqJLEd5oLdodnwITUynNCfyDOXeigQLY=
 github.com/matryer/goblueprints v2.0.0+incompatible h1:HPeAn2kjzE3vJNCKTJkXnIieUhEC5lYkmceoppfIm1M=
 github.com/matryer/goblueprints v2.0.0+incompatible/go.mod h1:rfbEc1p/bzwUVXTp4pg873oUc/nOLiTTDZjwGhTAM10=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
