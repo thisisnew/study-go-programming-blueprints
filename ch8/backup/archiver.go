@@ -23,7 +23,6 @@ func (z *zipper) Archiver(src, dest string) error {
 	if err != nil {
 		return err
 	}
-
 	defer out.Close()
 
 	w := zip.NewWriter(out)
@@ -42,7 +41,6 @@ func (z *zipper) Archiver(src, dest string) error {
 		if err != nil {
 			return err
 		}
-
 		defer in.Close()
 
 		f, err := w.Create(path)
@@ -54,8 +52,8 @@ func (z *zipper) Archiver(src, dest string) error {
 		if err != nil {
 			return err
 		}
-		return nil
 
+		return nil
 	})
 }
 
