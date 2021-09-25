@@ -56,7 +56,7 @@ func main() {
 			return true
 		}
 		m.Paths[path.Path] = path.Hash
-		return false // carry on
+		return false
 	})
 	if fatalErr != nil {
 		return
@@ -73,7 +73,7 @@ func main() {
 		case <-time.After(*interval):
 			check(m, col)
 		case <-signalChan:
-			// stop
+
 			fmt.Println()
 			log.Printf("Stopping...")
 			return
@@ -89,7 +89,7 @@ func check(m *backup.Monitor, col *filedb.C) {
 	}
 	if counter > 0 {
 		log.Printf("  Archived %d directories\n", counter)
-		// update hashes
+
 		var path path
 		col.SelectEach(func(_ int, data []byte) (bool, []byte, bool) {
 			if err := json.Unmarshal(data, &path); err != nil {
